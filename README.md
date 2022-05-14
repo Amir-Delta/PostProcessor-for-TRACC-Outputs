@@ -1,5 +1,5 @@
 # Introduction
-The python scripts in this repository allow you to postprocess Basemap TRACC's outputs and create a block-level accessibility score similar to what is developed in [this study](Developing%20a%20Census%20Block%20Level%20Accessibility%20Measure%20for%20St.%20Louis%20Metropolitan%20Area.pdf). 
+The python scripts in this repository allow you to postprocess Basemap TRACC's outputs and create a US Census Block-level accessibility score similar to what is developed in [this study](Developing%20a%20Census%20Block%20Level%20Accessibility%20Measure%20for%20St.%20Louis%20Metropolitan%20Area.pdf). 
 
 # Before you start 
 * [The study](Developing%20a%20Census%20Block%20Level%20Accessibility%20Measure%20for%20St.%20Louis%20Metropolitan%20Area.pdf) which is the basis of the development of python scripts within this repository, makes several assumptions including the shape of the accessibility function. Understanding these assumptions help you modify the python scripts to fit your data, geography, and accessibility function assumption. 
@@ -25,16 +25,16 @@ To obtain OpenStreetMap data, visit [Geofabrik's free download server](https://d
 
 # The scripts
 There are two scripts within this repository. Although they are pretty similar in structure, they use different functions to calculate accessibility score.
-* [AccessibilityScore_TravelTime](AccessibilityScore_TravelTime.py) calculates accessibility score based on the travel time between origins and destinations. This script is used when travel time is more important to the user than travel distance, for example when travel mode is transit. 
-* [AccessibilityScore_TravelDistance](AccessibilityScore_TravelDistance.py) calculates accessibility score based on the travel distance between origins and destinations. This script is used when travel distance is more important to the user than travel time, for example when travel mode is walk.  
+* [AccessibilityScore_TravelTime](AccessibilityScore_TravelTime.py) calculates accessibility score based on travel time between origins and destinations. This script is used when travel time is more important to transportation network user than travel distance, for example when travel mode is transit. 
+* [AccessibilityScore_TravelDistance](AccessibilityScore_TravelDistance.py) calculates accessibility score based on travel distance between origins and destinations. This script is used when travel distance is more important to transportation network user than travel time, for example when travel mode is walk.  
 
 ## Variables and Parameters
 In the beginning of each script, a few variables and scripts need to be specified. These variables are as follows:
-* **Server**: The name of the Microsoft SQL Server on which TRACC run output is stored
-* Database: The name of the Microsoft SQL database on which TRACC run outputs is stored. Note that every time a new project is defined in TRACC, a new database is created in Microsoft SQL Server to store the outputs of TRACC run whithin that project.
-* ResultHeaderId: An integer that identifies the specific TRACC run for which the accessibility score is calculated. The first run in a new TRACC project is assigned a ResultHeaderId of 1. The ResultHeaderId increases one by one in the subsequent runs.
-* output: The path and name of the CSV file that will be created by the scripts and would contain the accessibility score for each origin.
-* Saturation and weight for each point of interest category, Travel distance (threshold_miles in AccessibilityScore_TravelTime) or travel time (threshold_minutes in AccessibilityScore_TravelDistance) catchments, and beta: These are parameters that define the shape of accessibility function. See [the study](Developing%20a%20Census%20Block%20Level%20Accessibility%20Measure%20for%20St.%20Louis%20Metropolitan%20Area.pdf) for more information on these parameters. 
+* **Server**: The name of Microsoft SQL Server on which TRACC run output is stored,
+* **Database**: The name of Microsoft SQL database on which TRACC run output is stored. Note that every time a new project is defined in TRACC, a new database is created in Microsoft SQL Server to store the outputs of runs associated with that project,
+* **ResultHeaderId**: An integer that identifies the specific TRACC run for which the accessibility score is calculated. The first run in a new TRACC project is assigned a **ResultHeaderId** of **1**. The **ResultHeaderId** increases one by one in the subsequent runs,
+* **output**: The path and name of the CSV file that will be created by the script and contain the accessibility score for each origin,
+* Saturation and weight for each point of interest category, travel distance (**threshold_miles** in AccessibilityScore_TravelTime) or travel time (**threshold_minutes** in AccessibilityScore_TravelDistance) catchments, and beta: These are parameters that define the shape of accessibility function. See [the study](Developing%20a%20Census%20Block%20Level%20Accessibility%20Measure%20for%20St.%20Louis%20Metropolitan%20Area.pdf) for more information on these parameters. 
 
-## The outputs
-The output of each of these scripts is a CSV file with two columns. The first column, **OrigName**, is an ID that identifies the origin (e.g. block) for which the accessibility score is calculated; the second column, **score**, is the accessibility score for that origin.
+## The output
+The output of each of these scripts is a CSV file with two columns. The first column, **OrigName**, is an ID that identifies the origin (here, US Census Block) for which the accessibility score is calculated; the second column, **score**, is the accessibility score for that origin.
