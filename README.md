@@ -19,7 +19,7 @@ The scripts within this repository are tested to work with python version 3, and
 * TRACC version 2.0.2, saves the travel time and distance estimates in a table named Result, in a Microsoft SQL Server database.
 * The python scripts in this repository obtain estimates from the Result table and perform some post-processing tasks to calculate the accessibility score for each origin. 
 
-## Data on Points of Interest:
+## Data on points of interest
 Although in [this study](Developing%20a%20Census%20Block%20Level%20Accessibility%20Measure%20for%20St.%20Louis%20Metropolitan%20Area.pdf), the data on points of interest was obtained internally, OpenStreetMap provides datasets on points of interest for many regions worldwide.\
 To obtain OpenStreetMap data, visit [Geofabrik's free download server](https://download.geofabrik.de/) and navigate to the page that represent your geographic region of interest. For Missouri, US, for example, the latest OpenStreetMap data in shapefile format can be obtained in [this page](https://download.geofabrik.de/north-america/us/missouri.html) and from [this link](https://download.geofabrik.de/north-america/us/missouri-latest-free.shp.zip). After downloading and unzipping the shapefile data folder for Missouri, US, you would be able to open it in a GIS software and access points of interest in a layer named gis_osm_pois_free_1.shp
 
@@ -28,7 +28,7 @@ There are two scripts within this repository. Although they are pretty similar i
 * [AccessibilityScore_TravelTime](AccessibilityScore_TravelTime.py) calculates accessibility score based on travel time between origins and destinations. This script is used when travel time is more important to transportation network user than travel distance, for example when travel mode is transit. 
 * [AccessibilityScore_TravelDistance](AccessibilityScore_TravelDistance.py) calculates accessibility score based on travel distance between origins and destinations. This script is used when travel distance is more important to transportation network user than travel time, for example when travel mode is walk.  
 
-## Variables and Parameters
+## Variables and parameters
 In the beginning of each script, a few variables and scripts need to be specified. These variables are as follows:
 * **Server**: The name of Microsoft SQL Server on which TRACC run output is stored,
 * **Database**: The name of Microsoft SQL database on which TRACC run output is stored. Note that every time a new project is defined in TRACC, a new database is created in Microsoft SQL Server to store the outputs of runs associated with that project,
@@ -36,5 +36,5 @@ In the beginning of each script, a few variables and scripts need to be specifie
 * **output**: The path and name of the CSV file that will be created by the script and contain the accessibility score for each origin,
 * Saturation and weight for each point of interest category, travel distance (**threshold_miles** in AccessibilityScore_TravelTime) or travel time (**threshold_minutes** in AccessibilityScore_TravelDistance) catchments, and **beta**: These are parameters that define the shape of accessibility function. See [the study](Developing%20a%20Census%20Block%20Level%20Accessibility%20Measure%20for%20St.%20Louis%20Metropolitan%20Area.pdf) for more information on these parameters. 
 
-## The output
+## The outputs
 The output of each of these scripts is a CSV file with two columns. The first column, **OrigName**, is an ID that identifies the origin (here, US Census Block) for which the accessibility score is calculated; the second column, **score**, is the accessibility score for that origin.
