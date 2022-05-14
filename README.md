@@ -29,7 +29,7 @@ There are two scripts within this repository. Although they are pretty similar i
 * [AccessibilityScore_TravelDistance](AccessibilityScore_TravelDistance.py) calculates accessibility score based on travel distance between origins and destinations. This script is used when travel distance is more important to transportation network user than travel time, for example when travel mode is walk.  
 
 ## Variables and parameters
-In the beginning of each script, a few variables and scripts need to be specified. These variables are as follows:
+Before running the scripts, a few variables and parameters need to be specified in them. These variables are as follows:
 * **Server**: The name of Microsoft SQL Server on which TRACC run output is stored,
 * **Database**: The name of Microsoft SQL database on which TRACC run output is stored. Note that every time a new project is defined in TRACC, a new database is created in Microsoft SQL Server to store the outputs of runs associated with that project,
 * **ResultHeaderId**: An integer that identifies the specific TRACC run for which the accessibility score is calculated. The first run in a new TRACC project is assigned a **ResultHeaderId** of **1**. The **ResultHeaderId** increases one by one in the subsequent runs,
