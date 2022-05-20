@@ -1,0 +1,9 @@
+Category,Saturation,Weight
+Education,20,0.6
+Entertainment and Recreation,20,0.5
+Food and Drink,100,0.1
+Grocery Stores,10,3
+Hospitals,1,6
+Pharmacies,10,0.6
+Public Services and Banks,40,0.4
+Shopping,100,0.1
