@@ -13,21 +13,12 @@ import sqlalchemy
 Server='Server-Name' # The name of the Microsoft SQL server in which the TRACC results are saved
 Database='Database-Name' # The name of the Microsoft SQL database in which the TRACC results are saved
 ResultHeaderId=1 # An integer that relates to a specific TRACC run.
+categories_input= "path\\Categories.csv" # Specify the path and name of the file that contains the categories of points of interest and their associated saturation and weight values
 output='path\\AccessibiltyScore.csv' # Specify the path and name of the output csv file. This csv file will contain calculated accessibility score for each unit of analysis
 
 # ---------------------Assigning Accessibility Function Parameters:-----------------------------------
 # These parameters are based on the points of interest categories and assumption defined in the study titled "Developing a Census Block Level Accessibility Measure for St. Louis Metropolitan Area" by Poorfakhraei et. al (2019).
 # These parameters can be changed based on your own assumptions and points of interest categories.
-
-# Assigning Saturation and Weight for points of interest categories
-Edu_Saturation, Edu_Weight= 20, 0.6 
-Entrtn_Saturation, Entrtn_Weight= 20, 0.5 
-Food_Saturation, Food_Weight= 100, 0.1 
-Grocry_Saturation, Grocry_Weight= 10, 3.0 
-Hosp_Saturation, Hosp_Weight= 1, 6.0 
-Pharma_Saturation, Pharma_Weight= 10, 0.6
-Public_Saturation, Public_Weight= 40, 0.4
-Shop_Saturation, Shop_Weight= 100, 0.1
 
 # Assigning the travel time catchment (in minutes)
 threshold_minutes= 30
@@ -79,31 +70,26 @@ data=pd.read_sql(query, conn)
 # Creating a new column named dist_factored where the value is an exponential factor of distance. This will be a value accounting for distance deterrioration
 data['dist_factored']=np.exp(-beta*data['TotalJourneyTime']).round(2)
 
+# Reading the csv file that contains the categories of points of interest and their associated saturation and weight values
+categories=pd.read_csv(categories_input)
+
 # Assigning the weights to each row of the data based on the POI category
-data.loc[data['Category'] == 'Education' ,'Weight']=Edu_Weight
-data.loc[data['Category'] == 'Entertainment and Recreation' ,'Weight']=Entrtn_Weight
-data.loc[data['Category'] == 'Food and Drink' ,'Weight']=Food_Weight
-data.loc[data['Category'] == 'Grocery Stores' ,'Weight']=Grocry_Weight
-data.loc[data['Category'] == 'Hospitals' ,'Weight']=Hosp_Weight
-data.loc[data['Category'] == 'Pharmacies' ,'Weight']=Pharma_Weight
-data.loc[data['Category'] == 'Public Services and Banks' ,'Weight']=Public_Weight
-data.loc[data['Category'] == 'Shopping' ,'Weight']=Shop_Weight
+for i in np.arange(len(categories)):
+    data.loc[data['Category'] == categories.loc[i,'Category'] ,'Weight']=categories.loc[i,'Weight']
 
 # Calculating scores for each POI (row) based on the deterrence factor and the weights 
 data['score']=data['dist_factored']*data['Weight']
 
-# Summing he N closest POI in each category for each census block (N is the target number for the POI category)
-grouped=pd.concat([
-data.query('Category == "Education"').groupby(['OrigName','Category'])['score'].nlargest(Edu_Saturation).sum(level=[0,1]),
-data.query('Category == "Entertainment and Recreation"').groupby(['OrigName','Category'])['score'].nlargest(Entrtn_Saturation).sum(level=[0,1]),
-data.query('Category == "Food and Drink"').groupby(['OrigName','Category'])['score'].nlargest(Food_Saturation).sum(level=[0,1]),
-data.query('Category == "Grocery Stores"').groupby(['OrigName','Category'])['score'].nlargest(Grocry_Saturation).sum(level=[0,1]),
-data.query('Category == "Hospitals"').groupby(['OrigName','Category'])['score'].nlargest(Hosp_Saturation).sum(level=[0,1]),
-data.query('Category == "Pharmacies"').groupby(['OrigName','Category'])['score'].nlargest(Pharma_Saturation).sum(level=[0,1]),
-data.query('Category == "Public Services and Banks"').groupby(['OrigName','Category'])['score'].nlargest(Public_Saturation).sum(level=[0,1]),
-data.query('Category == "Shopping"').groupby(['OrigName','Category'])['score'].nlargest(Shop_Saturation).sum(level=[0,1])
-])
-
+# Summing the N closest POI in each category for each census block (N is the target number for the POI category)
+for i in np.arange(len(categories)):
+    if i==0:
+        grouped=data.query("Category == '%s'" % categories.loc[0,'Category']).groupby(['OrigName','Category'])['score'].nlargest(categories.loc[0,'Saturation']).groupby(['OrigName','Category']).sum()
+    else:
+        grouped=pd.concat([
+            grouped,
+            data.query("Category == '%s'" % categories.loc[i,'Category']).groupby(['OrigName','Category'])['score'].nlargest(categories.loc[i,'Saturation']).groupby(['OrigName','Category']).sum()
+            ])
+        
 # Summing the scores in each category to come up with the total score in each census block and naming it final_score
 final_score=grouped.groupby('OrigName').sum()
 
